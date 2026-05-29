@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Post-Mortem: Cuando mi e-commerce se rompió en mobile</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 700px;
+      margin: 40px auto;
+      padding: 0 20px;
+      color: #222;
+      line-height: 1.7;
+    }
+    h1 { font-size: 1.8rem; margin-bottom: 5px; }
+    h2 { font-size: 1.2rem; margin-top: 30px; border-bottom: 1px solid #ccc; padding-bottom: 4px; }
+    p  { margin: 10px 0; }
+    pre {
+      background: #f4f4f4;
+      padding: 12px;
+      border-left: 3px solid #888;
+      overflow-x: auto;
+      font-size: 0.9rem;
+    }
+    .meta { color: #666; font-size: 0.9rem; margin-bottom: 30px; }
+    ul { padding-left: 20px; }
+    li { margin-bottom: 6px; }
+  </style>
+</head>
+<body>
+
+  <h1>Cuando mi e-commerce se rompió en mobile</h1>
+  <p class="meta">Por Tomas Enrique Bruland · Mayo 2026 · HTML &amp; CSS</p>
+
+  <h2>Contexto</h2>
+  <p>
+    Durante el último mes estuve desarrollando <strong>ShopEasy</strong>, una tienda online estática hecha con HTML y CSS. El objetivo era crear una página de productos con encabezado, grilla de tarjetas y carrito lateral, para usarla como portfolio personal.
+  </p>
+
+  <h2>El Problema</h2>
+  <p>
+    Dos días antes de la entrega, un compañero revisó el sitio desde su celular y el layout estaba completamente roto: las tarjetas se salían de la pantalla y el menú tapaba el contenido.
+  </p>
+  <p>
+    La causa fue que usé medidas fijas en píxeles (<code>width: 900px</code>) en todos los componentes, sin ningún <code>media query</code>. Nunca había probado en mobile durante el desarrollo.
+  </p>
+
+  <h2>Acciones Tomadas</h2>
+  <p><strong>1. Diagnóstico:</strong> Usé las DevTools de Chrome con el simulador de dispositivos móviles para confirmar el problema.</p>
+  <p><strong>2. Rama de trabajo:</strong> Creé una rama separada para no afectar la versión publicada:</p>
+  <pre>git checkout -b fix/responsive-layout</pre>
+  <p><strong>3. Refactorización del CSS:</strong> Reemplacé medidas fijas por unidades relativas y agregué media queries:</p>
+  <pre>/* ANTES */
+.product-grid {
+  width: 900px;
+}
+
+/* DESPUÉS */
+.product-grid {
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+  .product-grid {
+    flex-direction: column;
+  }
+}</pre>
+  <p><strong>4. Pull Request:</strong> Pedí al compañero que revisara desde su celular antes de aprobar los cambios.</p>
+  <p><strong>5. Merge:</strong> Una vez aprobado, hice el merge a <code>main</code> y GitHub Pages actualizó el sitio automáticamente.</p>
+
+  <h2>Aprendizajes</h2>
+  <ul>
+    <li><strong>Mobile-first desde el inicio:</strong> es más fácil escalar de chico a grande que al revés.</li>
+    <li><strong>Usar las DevTools siempre:</strong> el simulador de mobile debería estar abierto desde el primer día.</li>
+    <li><strong>Trabajar con ramas:</strong> permite experimentar sin romper lo que ya funciona.</li>
+    <li><strong>Compartir avances temprano:</strong> el feedback antes vale más que la revisión al final.</li>
+  </ul>
+
+  <h2>Reflexión: Feedback Radicalmente Sincero</h2>
+  <p>
+    Mi compañero fue directo: <em>"Esto no funciona en mobile para nada."</em> Mi primera reacción fue defensiva, pero luego entendí que ese feedback honesto era exactamente lo que necesitaba.
+  </p>
+  <p>
+    Aprendí a separar la crítica al código de una crítica personal. El código estaba roto; yo tenía la capacidad de arreglarlo. Hoy prefiero un comentario incómodo a tiempo que un elogio que no me ayuda a mejorar.
+  </p>
+
+  <h2>Evidencia de Control de Versiones</h2>
+  <p>Repositorio: <strong>github.com/[tu-usuario]/shopeasy</strong> · Rama: <strong>fix/responsive-layout</strong></p>
+  <ul>
+    <li><code>feat: initial layout with flexbox grid</code></li>
+    <li><code>fix: replace fixed px values with relative units</code></li>
+    <li><code>fix: add media queries for mobile breakpoints</code></li>
+    <li><code>docs: update README with responsive design notes</code></li>
+  </ul>
+
+</body>
+</html>
